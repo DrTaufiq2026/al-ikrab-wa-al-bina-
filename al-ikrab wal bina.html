@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعراب والبناء - Pembelajaran Interaktif</title>
+    
+    <!-- Fonts: Noto Naskh Arabic for clear harakat, Poppins for UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;700&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           CSS VARIABLES & THEME
+           ========================================================================== */
+        :root {
+            /* Sea Blue Theme Colors */
+            --bg-primary: #0a192f;
+            --bg-secondary: #112240;
+            --bg-tertiary: #233554;
+            --accent-gold: #ffd700;
+            --accent-cyan: #64ffda;
+            --text-main: #e6f1ff;
+            --text-muted: #8892b0;
+            --correct: #4caf50;
+            --wrong: #f44336;
+            
+            --glass-bg: rgba(17, 34, 64, 0.7);
+            --glass-border: rgba(100, 255, 218, 0.2);
+            
+            --font-arabic: 'Noto Naskh Arabic', serif;
+            --font-ui: 'Poppins', sans-serif;
+            
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .light-mode {
+            --bg-primary: #f0f8ff; /* Alice Blue */
+            --bg-secondary: #e6f2ff;
+            --bg-tertiary: #cce5ff;
+            --accent-gold: #d4af37;
+            --accent-cyan: #0056b3;
+            --text-main: #0a192f;
+            --text-muted: #4a5568;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 86, 179, 0.2);
+        }
+
+        /* ==========================================================================
+           RESET & GLOBAL
+           ========================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-ui);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        .arabic {
+            font-family: var(--font-arabic);
+            direction: rtl;
+            text-align: right;
+            font-size: 1.5rem;
+            line-height: 2.2;
+        }
+
+        .arabic-lg { font-size: 2.5rem; }
+        .arabic-xl { font-size: 3.5rem; font-weight: 700; }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2rem;
+            color: var(--accent-cyan);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ==========================================================================
+           NAVIGATION
+           ========================================================================== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: rgba(10, 25, 47, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+        .light-mode nav { background: rgba(240, 248, 255, 0.9); }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-family: var(--font-arabic); font-size: 1.5rem; font-weight: bold; color: var(--accent-gold); }
+
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links li a {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .nav-links li a:hover, .nav-links li a.active {
+            color: var(--accent-cyan);
+            background: var(--glass-border);
+        }
+
+        .nav-controls { display: flex; gap: 15px; align-items: center; }
+        .theme-toggle, .search-btn {
+            background: transparent;
+            color: var(--text-main);
+            font-size: 1.2rem;
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
+            background: transparent;
+        }
+        #progress-bar {
+            height: 100%; width: 0%;
+            background: var(--accent-gold);
+            transition: width 0.2s ease;
+        }
+
+        /* Mobile Menu */
+        .menu-btn { display: none; font-size: 1.5rem; background: transparent; color: var(--text-main); }
+
+        /* ==========================================================================
+           HERO SECTION (BOMBASTIC SEA BLUE)
+           ========================================================================== */
+        #hero {
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+        }
+
+        /* Floating particles CSS */
+        .bubbles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .bubble {
+            position: absolute; background: rgba(100, 255, 218, 0.1); border-radius: 50%;
+            animation: float 10s infinite ease-in-out; bottom: -100px;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            background: var(--glass-bg);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-subtitle { font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
+        .hero-title { color: var(--accent-gold); margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        
+        .author-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #112240, #233554);
+            border: 1px solid var(--accent-cyan);
+            padding: 10px 25px;
+            border-radius: 30px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.2);
+        }
+        .light-mode .author-badge { background: linear-gradient(45deg, #e6f2ff, #cce5ff); }
+        .author-badge span { color: var(--accent-gold); font-weight: bold; }
+
+        .original-author { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 30px; }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--accent-cyan);
+            color: #0a192f;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 0 15px rgba(100,255,218,0.4);
+            margin: 10px;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(100,255,218,0.6); }
+        
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--accent-cyan);
+            border: 2px solid var(--accent-cyan);
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: var(--transition);
+            margin: 10px;
+        }
+        .btn-secondary:hover { background: rgba(100,255,218,0.1); }
+
+        /* ==========================================================================
+           UI COMPONENTS (CARDS, GRIDS)
+           ========================================================================== */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+        /* Concept Highlight Hover */
+        .concept-card .highlight-target { transition: var(--transition); padding: 2px 5px; border-radius: 4px; }
+        .concept-card:hover .highlight-target { background: rgba(255, 215, 0, 0.2); color: var(--accent-gold); }
+
+        /* Arkan Diagram */
+        .arkan-container {
+            display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;
+            position: relative;
+        }
+        .arkan-node {
+            width: 150px; height: 150px; border-radius: 50%;
+            background: var(--bg-tertiary); border: 2px solid var(--accent-cyan);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: var(--transition);
+            z-index: 2; position: relative;
+        }
+        .arkan-node i { font-size: 2rem; color: var(--accent-gold); margin-bottom: 10px; }
+        .arkan-node:hover, .arkan-node.active { transform: scale(1.1); background: var(--accent-cyan); border-color: var(--accent-gold); }
+        .arkan-node:hover h3, .arkan-node.active h3 { color: #0a192f; }
+        .arkan-node:hover i, .arkan-node.active i { color: #0a192f; }
+        
+        .arkan-details {
+            width: 100%; text-align: center; margin-top: 30px; padding: 20px;
+            background: var(--glass-bg); border-radius: 10px; display: none;
+            border-top: 3px solid var(--accent-gold);
+        }
+        .arkan-details.active { display: block; animation: fadeIn 0.5s ease; }
+
+        /* Tabs System (For Halat & Alamat) */
+        .tabs-header { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--bg-tertiary); color: var(--text-main);
+            padding: 10px 25px; border-radius: 30px; font-weight: bold; border: 1px solid transparent;
+            font-family: var(--font-arabic); font-size: 1.2rem;
+        }
+        .tab-btn:hover { background: rgba(100, 255, 218, 0.1); border-color: var(--accent-cyan); }
+        .tab-btn.active { background: var(--accent-cyan); color: #0a192f; }
+        
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        /* Interactive Sentence Example */
+        .example-box {
+            background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;
+            margin: 10px 0; border-right: 4px solid var(--accent-gold);
+            cursor: help; position: relative;
+        }
+        .light-mode .example-box { background: rgba(0,0,0,0.05); }
+        .harakat-highlight { color: var(--accent-gold); font-weight: bold; font-size: 1.2em; transition: 0.3s; }
+        .example-box:hover .harakat-highlight { transform: scale(1.5); display: inline-block; text-shadow: 0 0 10px var(--accent-gold); }
+        
+        .tooltip-text {
+            visibility: hidden; width: 120px; background-color: var(--accent-cyan); color: #0a192f;
+            text-align: center; border-radius: 6px; padding: 5px; position: absolute;
+            z-index: 1; bottom: 125%; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; font-family: var(--font-ui);
+        }
+        .example-box:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        /* Tree/Taxonomy */
+        .taxonomy-list { list-style: none; padding-right: 20px; border-right: 2px dashed var(--glass-border); }
+        .taxonomy-item { margin: 15px 0; position: relative; }
+        .taxonomy-item::before { content: ''; position: absolute; right: -20px; top: 15px; width: 15px; height: 2px; background: var(--glass-border); }
+        .tax-title { cursor: pointer; color: var(--accent-gold); font-weight: bold; }
+        .tax-content { display: none; padding-top: 10px; padding-right: 15px; }
+
+        /* Quiz */
+        .quiz-container { max-width: 600px; margin: 0 auto; }
+        .question-box { margin-bottom: 20px; }
+        .options { display: grid; gap: 10px; }
+        .option-btn {
+            background: var(--bg-tertiary); color: var(--text-main); padding: 15px;
+            border-radius: 8px; text-align: right; border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+        .option-btn:hover { background: rgba(100,255,218,0.1); border-color: var(--accent-cyan); }
+        .option-btn.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .option-btn.wrong { background: var(--wrong); color: white; border-color: var(--wrong); }
+        
+        #quiz-feedback { margin: 15px 0; font-weight: bold; text-align: center; min-height: 24px; }
+        #next-q-btn, #restart-quiz-btn { display: none; margin: 0 auto; }
+        #quiz-results { text-align: center; display: none; }
+        .score-display { font-size: 3rem; color: var(--accent-gold); margin: 20px 0; font-weight: bold; }
+
+        /* Modal / Search Overlay */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(10, 25, 47, 0.95); backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            margin: 10% auto; padding: 20px; width: 80%; max-width: 600px;
+            background: var(--bg-secondary); border-radius: 15px; border: 1px solid var(--accent-cyan);
+            position: relative;
+        }
+        .close-modal { color: var(--text-main); float: left; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .search-input {
+            width: 100%; padding: 15px; border-radius: 8px; border: none; font-size: 1.1rem;
+            margin-bottom: 20px; background: var(--bg-tertiary); color: var(--text-main);
+        }
+        #search-results li { padding: 10px; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
+        #search-results li:hover { color: var(--accent-cyan); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* ==========================================================================
+           RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; top: 60px; right: -100%; width: 250px; height: 100vh;
+                background: var(--bg-secondary); flex-direction: column; padding-top: 20px;
+                transition: 0.4s ease; border-left: 1px solid var(--glass-border);
+            }
+            .nav-links.active { right: 0; }
+            .menu-btn { display: block; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .arkan-container { flex-direction: column; }
+            .arabic-xl { font-size: 2.5rem; }
+            section { padding: 60px 0; }
+        }
+        
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+            .bubbles { display: none; }
+        }
+        
+        /* ==========================================================================
+           PRESENTATION & FUTURISTIC MODS (FOR LECTURE HALL)
+           ========================================================================== */
+        html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+        section { scroll-snap-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 100px; padding-bottom: 50px; }
+        
+        body { font-size: 1.3rem; }
+        .arabic { font-size: 2.8rem; line-height: 2.2; }
+        .arabic-lg { font-size: 4rem; }
+        .arabic-xl { font-size: 6.5rem; text-shadow: 0 0 30px var(--accent-cyan); font-weight: 800; }
+        .section-title { font-size: 3.8rem; text-shadow: 0 0 15px var(--accent-cyan); margin-bottom: 60px; }
+        p { font-size: 1.4rem; }
+        
+        .glass-card { 
+            border: 2px solid rgba(100,255,218,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(100,255,218,0.05); 
+            padding: 40px;
+        }
+        .glass-card:hover {
+            box-shadow: 0 0 40px rgba(100,255,218,0.4), inset 0 0 30px rgba(100,255,218,0.2);
+            border-color: var(--accent-cyan);
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        .btn-primary, .btn-secondary { font-size: 1.6rem; padding: 15px 40px; }
+        .btn-primary { box-shadow: 0 0 20px rgba(100,255,218,0.5); }
+        .btn-primary:hover { box-shadow: 0 0 40px var(--accent-cyan); }
+        
+        /* Game Styles */
+        .game-board { background: rgba(0,0,0,0.5); border: 3px dashed var(--accent-gold); border-radius: 20px; padding: 40px; position: relative; overflow: hidden; }
+        .word-drop { display: inline-block; padding: 20px 50px; margin: 10px; background: var(--bg-tertiary); border: 2px solid var(--accent-cyan); border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 4.5rem; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .word-drop:hover { transform: scale(1.1); box-shadow: 0 0 40px var(--accent-cyan); }
+        .category-zone { display: flex; justify-content: space-around; margin-top: 50px; }
+        .zone-btn { width: 45%; padding: 40px; font-size: 3.5rem; background: rgba(10, 25, 47, 0.9); border: 4px solid var(--glass-border); border-radius: 20px; color: white; cursor: pointer; transition: 0.3s; font-weight: bold; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        .zone-btn.murab:hover { border-color: var(--accent-cyan); box-shadow: 0 0 40px var(--accent-cyan), inset 0 0 20px rgba(100,255,218,0.3); background: rgba(100,255,218,0.1); }
+        .zone-btn.mabni:hover { border-color: var(--accent-gold); box-shadow: 0 0 40px var(--accent-gold), inset 0 0 20px rgba(255,215,0,0.3); background: rgba(255,215,0,0.1); }
+        .boom-effect { animation: boom 0.5s ease-out; }
+        @keyframes boom { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.3); filter: brightness(1.5); text-shadow: 0 0 50px white; } 100% { transform: scale(1); filter: brightness(1); } }
+        
+        /* Highlight Game */
+        .sentence-game { font-size: 5rem; line-height: 2.5; text-align: center; font-weight: bold; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 20px; }
+        .clickable-word { cursor: pointer; padding: 0 15px; border-radius: 15px; transition: 0.3s; border-bottom: 6px solid transparent; display: inline-block; }
+        .clickable-word:hover { background: rgba(100,255,218,0.3); transform: translateY(-5px); }
+        .clickable-word.correct { color: var(--correct); text-shadow: 0 0 30px var(--correct); border-color: var(--correct); animation: boom 0.6s; background: rgba(76, 175, 80, 0.1); }
+        .clickable-word.wrong { color: var(--wrong); text-shadow: 0 0 30px var(--wrong); border-color: var(--wrong); animation: shake 0.4s; background: rgba(244, 67, 54, 0.1); }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo arabic">الإعراب والبناء</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#hero" class="active">Utama</a></li>
+                <li><a href="#concept">Mahu Mafhum?</a></li>
+                <li><a href="#arkan">Arkan</a></li>
+                <li><a href="#halat">Halat & Alamat</a></li>
+                <li><a href="#mabni">Mabniyat</a></li>
+                <li><a href="#interactive-games" style="color: var(--accent-gold); text-shadow: 0 0 8px var(--accent-gold);"><i class="fas fa-gamepad"></i> Latihan Pintar</a></li>
+                <li><a href="#quiz">Kuiz Mini</a></li>
+            </ul>
+            <div class="nav-controls">
+                <button class="search-btn" onclick="openSearch()" aria-label="Cari Topik"><i class="fas fa-search"></i></button>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Tukar Tema"><i class="fas fa-moon" id="theme-icon"></i></button>
+                <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="progress-container"><div id="progress-bar"></div></div>
+    </nav>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSearch()">&times;</span>
+            <h3 class="arabic text-right mb-3" style="margin-bottom: 15px;">ابحث في الدرس...</h3>
+            <input type="text" id="searchInput" class="search-input arabic" placeholder="Taip kata kunci (cth: الرفع, البناء)..." onkeyup="performSearch()" dir="rtl">
+            <ul id="search-results" class="arabic"></ul>
+        </div>
+    </div>
+
+    <!-- 1. HERO SECTION -->
+    <section id="hero">
+        <div class="bubbles" id="bubbles-container"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-subtitle" style="font-size: 1.5rem;"><i class="fas fa-rocket"></i> رحلة تفاعلية في أساسيات النحو</div>
+                <h1 class="arabic arabic-xl hero-title">الإعراب والبناء</h1>
+                
+                <div class="author-badge" style="padding: 20px 40px; border-width: 2px;">
+                    <span style="font-size: 1.2rem; color: #fff;">Interactive Web Presentation disediakan oleh:</span><br>
+                    <span style="font-size: 2rem; color: var(--accent-gold); text-shadow: 0 0 15px var(--accent-gold); display: block; margin: 10px 0;"><i class="fas fa-user-graduate"></i> Dr. Mohd Taufiq bin Abd Talib</span>
+                    <span style="font-size: 1.2rem; color: var(--accent-cyan);">Universiti Sultan Zainal Abidin (UniSZA)</span>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <a href="#concept" class="btn-primary arabic">ابدأ التعلّم <i class="fas fa-play-circle ml-2"></i></a>
+                    <a href="#interactive-games" class="btn-secondary arabic" style="color: var(--accent-gold); border-color: var(--accent-gold);">ألعاب تفاعلية <i class="fas fa-gamepad ml-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. CONCEPT: الإعراب vs البناء -->
+    <section id="concept" class="reveal">
+        <div class="container">
+            <h2 class="section-title arabic">مفهوم الإعراب والبناء</h2>
+            <div class="grid-2">
+                <!-- I'rab Card -->
+                <div class="glass-card concept-card arabic">
+                    <h3 class="arabic-lg" style="color: var(--accent-cyan); border-bottom: 1px solid; padding-bottom:10px; margin-bottom: 20px;">الإعراب</h3>
+                    <p>العلامة التي تقع في آخر الكلمة وتحدد موقعها من الجملة ووظيفتها فيها.</p>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                        <strong>الخلاصة:</strong> <span class="highlight-target">تغيّر آخر الكلمة</span> بتغير العوامل.
+                    </div>
+                </div>
+                
+                <!-- Binaa Card -->
+                <div class="glass-card concept-card arabic">
+                    <h3 class="arabic-lg" style="color: var(--accent-gold); border-bottom: 1px solid; padding-bottom:10px; margin-bottom: 20px;">البناء</h3>
+                    <p>لزوم آخرِ الكلمة حالةً واحدة، أي أن آخر الكلمة يلزم علامة واحدة لا تتغير بتغير العوامل.</p>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                        <strong>الخلاصة:</strong> <span class="highlight-target">لزوم آخر الكلمة حالة واحدة</span>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Comparison Modal Trigger -->
+            <div style="text-align: center; margin-top: 40px;">
+                <h3 class="arabic mb-3">المعرب والمبني</h3>
+                <div class="grid-2" style="max-width: 600px; margin: 0 auto; gap:10px;">
+                    <button class="btn-primary arabic" onclick="showComparison('murab')">المعرب</button>
+                    <button class="btn-secondary arabic" onclick="showComparison('mabni')">المبني</button>
+                </div>
+                <div id="comparison-result" class="glass-card arabic" style="margin-top: 20px; display: none; max-width: 600px; margin-left: auto; margin-right:auto;">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ARKAN AL-I'RAB -->
+    <section id="arkan" class="reveal">
+        <div class="container">
+            <h2 class="section-title arabic">أركان الإعراب</h2>
+            <p style="text-align: center; margin-bottom: 40px;">Klik pada setiap rukun untuk melihat penjelasan.</p>
+            
+            <div class="arkan-container">
+                <div class="arkan-node arabic" onclick="showArkan('amil')">
+                    <i class="fas fa-magic"></i>
+                    <h3>عامل</h3>
+                </div>
+                <i class="fas fa-arrow-left" style="font-size:2rem; color:var(--glass-border)"></i>
+                
+                <div class="arkan-node arabic" onclick="showArkan('mawqi')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>موقع</h3>
+                </div>
+                <i class="fas fa-arrow-left" style="font-size:2rem; color:var(--glass-border)"></i>
+
+                <div class="arkan-node arabic" onclick="showArkan('mamul')">
+                    <i class="fas fa-font"></i>
+                    <h3>معمول</h3>
+                </div>
+                <i class="fas fa-arrow-left" style="font-size:2rem; color:var(--glass-border)"></i>
+
+                <div class="arkan-node arabic" onclick="showArkan('alamat')">
+                    <i class="fas fa-tag"></i>
+                    <h3>علامة</h3>
+                </div>
+            </div>
+
+            <div id="arkan-details" class="arkan-details arabic">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. AL-MURABAT -->
+    <section id="murabat" class="reveal" style="background: rgba(0,0,0,0.1);">
+        <div class="container">
+            <h2 class="section-title arabic">المعربات</h2>
+            <div class="grid-2">
+                <div class="glass-card arabic text-center">
+                    <i class="fas fa-cube" style="font-size:3rem; color:var(--accent-cyan); margin-bottom:15px;"></i>
+                    <h3 class="arabic-lg">1. الاسم المتمكن</h3>
+                    <p>الاسم الذي لا يشبه الفعل ولا الحرف.</p>
+                </div>
+                <div class="glass-card arabic text-center">
+                    <i class="fas fa-bolt" style="font-size:3rem; color:var(--accent-gold); margin-bottom:15px;"></i>
+                    <h3 class="arabic-lg">2. الفعل المضارع</h3>
+                    <p>غير المتصل بنون التوكيد المباشرة أو بنون النسوة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5 & 6. HALAT & ALAMAT AL-I'RAB (INTERACTIVE EXPLORER) -->
+    <section id="halat" class="reveal">
+        <div class="container">
+            <h2 class="section-title arabic">حالات وعلامات الإعراب</h2>
+            
+            <!-- Halat Tabs -->
+            <div class="tabs-header" id="halat-tabs">
+                <button class="tab-btn active" onclick="openTab('raf')">الرفع</button>
+                <button class="tab-btn" onclick="openTab('nasb')">النصب</button>
+                <button class="tab-btn" onclick="openTab('jarr')">الجر</button>
+                <button class="tab-btn" onclick="openTab('jazm')">الجزم</button>
+            </div>
+
+            <!-- Tab Content: RAF' -->
+            <div id="raf" class="tab-content active glass-card">
+                <h3 class="arabic arabic-lg" style="color:var(--accent-cyan); margin-bottom:20px;">علامات الرفع</h3>
+                <div class="grid-4 arabic text-center" style="margin-bottom: 30px;">
+                    <div class="glass-card" style="padding:15px;">الضمة <br><small>(الحركة)</small></div>
+                    <div class="glass-card" style="padding:15px;">الواو <br><small>(الحرف)</small></div>
+                    <div class="glass-card" style="padding:15px;">الألف <br><small>(الحرف)</small></div>
+                    <div class="glass-card" style="padding:15px;">النون <br><small>(الحرف)</small></div>
+                </div>
+                <h4 class="arabic" style="border-bottom: 1px solid var(--glass-border); padding-bottom:5px;">أمثلة تفاعلية (Lalukan mouse untuk lihat tanda):</h4>
+                <div class="grid-2 arabic" style="margin-top: 15px;">
+                    <div class="example-box">
+                        ينجح المجتهد<span class="harakat-highlight">ُ</span>
+                        <span class="tooltip-text">علامة الرفع: الضمة</span>
+                    </div>
+                    <div class="example-box">
+                        يصلي المسلم<span class="harakat-highlight">ون</span>
+                        <span class="tooltip-text">علامة الرفع: الواو</span>
+                    </div>
+                    <div class="example-box">
+                        يجتهد العامل<span class="harakat-highlight">ان</span>
+                        <span class="tooltip-text">علامة الرفع: الألف</span>
+                    </div>
+                    <div class="example-box">
+                        الطلاب يدرس<span class="harakat-highlight">ون</span>
+                        <span class="tooltip-text">علامة الرفع: ثبوت النون</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: NASB -->
+            <div id="nasb" class="tab-content glass-card">
+                <h3 class="arabic arabic-lg" style="color:var(--accent-cyan); margin-bottom:20px;">علامات النصب</h3>
+                <div class="grid-4 arabic text-center" style="margin-bottom: 30px;">
+                    <div class="glass-card" style="padding:15px;">الفتحة</div>
+                    <div class="glass-card" style="padding:15px;">الألف</div>
+                    <div class="glass-card" style="padding:15px;">الياء</div>
+                    <div class="glass-card" style="padding:15px;">الكسرة / حذف النون</div>
+                </div>
+                <div class="grid-2 arabic">
+                    <div class="example-box">أُكْرِمُ الأستاذ<span class="harakat-highlight">َ</span><span class="tooltip-text">الفتحة</span></div>
+                    <div class="example-box">أَعْطِ ذ<span class="harakat-highlight">ا</span> الحَقِّ حَقّهُ<span class="tooltip-text">الألف</span></div>
+                    <div class="example-box">يحبُّ اللّه المتق<span class="harakat-highlight">ين</span><span class="tooltip-text">الياء</span></div>
+                    <div class="example-box">أساعد الفتيات<span class="harakat-highlight">ِ</span><span class="tooltip-text">الكسرة</span></div>
+                    <div class="example-box">لنْ تنجح<span class="harakat-highlight">وا</span><span class="tooltip-text">حذف النون</span></div>
+                </div>
+            </div>
+
+            <!-- Tab Content: JARR -->
+            <div id="jarr" class="tab-content glass-card">
+                <h3 class="arabic arabic-lg" style="color:var(--accent-cyan); margin-bottom:20px;">علامات الجر</h3>
+                <p class="arabic" style="margin-bottom:20px;">(يختص بالأسماء فقط)</p>
+                <div class="grid-2 arabic">
+                    <div class="example-box">قُمْ لِلمعلم<span class="harakat-highlight">ِ</span><span class="tooltip-text">الكسرة</span></div>
+                    <div class="example-box">أَطِعْ أمرَ أبي<span class="harakat-highlight">ك</span><span class="tooltip-text">الياء</span></div>
+                    <div class="example-box">عن عمر<span class="harakat-highlight">َ</span> ابن الخطاب<span class="tooltip-text">الفتحة (ممنوع من الصرف)</span></div>
+                </div>
+            </div>
+
+            <!-- Tab Content: JAZM -->
+            <div id="jazm" class="tab-content glass-card">
+                <h3 class="arabic arabic-lg" style="color:var(--accent-cyan); margin-bottom:20px;">علامات الجزم</h3>
+                <div class="grid-3 arabic text-center" style="margin-bottom: 20px;">
+                    <div class="glass-card" style="padding:10px;">السكون</div>
+                    <div class="glass-card" style="padding:10px;">حذف النون</div>
+                    <div class="glass-card" style="padding:10px;">حذف الآخر (حرف العلة)</div>
+                </div>
+                <div class="grid-3 arabic">
+                    <div class="example-box">لم اسافِر<span class="harakat-highlight">ْ</span> إلى يامان<span class="tooltip-text">السكون</span></div>
+                    <div class="example-box">اسكتوا عَن شرّ تسلم<span class="harakat-highlight">وا</span><span class="tooltip-text">حذف النون</span></div>
+                    <div class="example-box">لا تَدْع<span class="harakat-highlight">ُ</span> إلا اللّه<span class="tooltip-text">حذف حرف العلة (الواو)</span></div>
+                </div>
+            </div>
+            
+            <!-- Taxonomy Explorer (Alamat Breakdown) -->
+            <div style="margin-top: 50px;">
+                <h3 class="arabic text-center mb-3">تقسيم علامات الإعراب</h3>
+                <div class="grid-3 arabic" style="direction: rtl;">
+                    <div>
+                        <h4 class="tax-title" onclick="toggleTax('tax-harakat')">الحركات <i class="fas fa-chevron-down" style="font-size:0.8rem"></i></h4>
+                        <ul id="tax-harakat" class="taxonomy-list tax-content">
+                            <li class="taxonomy-item">الضمة</li>
+                            <li class="taxonomy-item">الفتحة</li>
+                            <li class="taxonomy-item">الكسرة</li>
+                            <li class="taxonomy-item">السكون</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="tax-title" onclick="toggleTax('tax-huruf')">الحروف <i class="fas fa-chevron-down" style="font-size:0.8rem"></i></h4>
+                        <ul id="tax-huruf" class="taxonomy-list tax-content">
+                            <li class="taxonomy-item">الألف</li>
+                            <li class="taxonomy-item">الواو</li>
+                            <li class="taxonomy-item">الياء</li>
+                            <li class="taxonomy-item">النون</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="tax-title" onclick="toggleTax('tax-hazf')">الحذف <i class="fas fa-chevron-down" style="font-size:0.8rem"></i></h4>
+                        <ul id="tax-hazf" class="taxonomy-list tax-content">
+                            <li class="taxonomy-item">حذف النون</li>
+                            <li class="taxonomy-item">حذف الآخر (حرف العلة)</li>
+                            <li class="taxonomy-item">حذف الحركة / السكون</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. AL-MABNIYAT (Asma' & Af'al) & ANWA' -->
+    <section id="mabni" class="reveal" style="background: rgba(0,0,0,0.1);">
+        <div class="container">
+            <h2 class="section-title arabic">المبنيات وأنواع البناء</h2>
+            
+            <div class="grid-2">
+                <!-- Asma' Mabniyah -->
+                <div class="glass-card arabic">
+                    <h3 class="arabic-lg text-center" style="color:var(--accent-cyan); margin-bottom: 20px;">الأسماء المبنية</h3>
+                    <ul style="list-style: square inside; padding-right: 15px;">
+                        <li><strong>أسماء متفرقة:</strong> سيبويه، يا خباثِ</li>
+                        <li><strong>العدد المركب:</strong> ثلاثة عشر، خمس عشرة</li>
+                        <li><strong>أسماء الأفعال:</strong> آمين، أف، هيَّا، حيَّ</li>
+                        <li><strong>أسماء الاستفهام:</strong> كيف، مَنْ، ماذا</li>
+                        <li><strong>أسماء الشرط:</strong> مَن، إن</li>
+                        <li><strong>الأسماء الموصولة:</strong> الذي، التي، أولئك</li>
+                        <li><strong>أسماء الإشارة:</strong> هذا، هذه، هؤلاء</li>
+                        <li><strong>الضمائر:</strong> هو، هما، هم</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <!-- Af'al Mabniyah -->
+                    <div class="glass-card arabic" style="margin-bottom: 20px;">
+                        <h3 class="arabic-lg text-center" style="color:var(--accent-gold); margin-bottom: 20px;">الأفعال المبنية</h3>
+                        <ol style="padding-right: 25px;">
+                            <li>كل الأفعال الماضية</li>
+                            <li>كل أفعال الأمر</li>
+                            <li>فعل مضارع متصل بنون النسوة أو نون التوكيد (يفعلن، تفعلن، أفعلنَّ، تفعلنَّ)</li>
+                        </ol>
+                    </div>
+
+                    <!-- Anwa' Al-Binaa -->
+                    <div class="glass-card arabic">
+                        <h3 class="arabic text-center" style="border-bottom: 1px dashed var(--glass-border); padding-bottom:10px; margin-bottom:15px;">أنواع البناء</h3>
+                        <p class="text-center" style="font-size:1.4rem; margin-bottom:15px;">المبنِي إما أن يلازم آخره:</p>
+                        <div class="grid-2 text-center" style="gap: 15px; font-size: 1.5rem;">
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border);">على السكون <br><span style="color:var(--accent-cyan)">(اكتبْ، لمْ)</span></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border);">على الضم <br><span style="color:var(--accent-cyan)">(حيثُ، كتبوا)</span></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border);">على الفتح <br><span style="color:var(--accent-cyan)">(كتبَ، أينَ)</span></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border);">على الكسر <br><span style="color:var(--accent-cyan)">(هؤلاءِ)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. INTERACTIVE GAMES SECTION (BOOMBASTIC) -->
+    <section id="interactive-games" class="reveal" style="background: radial-gradient(circle at center, rgba(100,255,218,0.05) 0%, var(--bg-primary) 100%);">
+        <div class="container">
+            <h2 class="section-title arabic text-center" style="color: var(--accent-gold);"><i class="fas fa-gamepad"></i> ألعاب تفاعلية (Latihan Pintar)</h2>
+            <p class="text-center mb-5" style="font-size: 1.8rem;">Uji minda anda dengan permainan interaktif futuristik ini!</p>
+            
+            <!-- Game 1: Sorting -->
+            <div class="glass-card game-board text-center">
+                <div style="position:absolute; top: -20px; left: -20px; font-size: 8rem; color: rgba(100,255,218,0.1);"><i class="fas fa-magic"></i></div>
+                <h3 class="arabic arabic-lg mb-3" style="color: var(--accent-cyan); text-shadow: 0 0 10px var(--accent-cyan);">تصنيف الكلمات (Asingkan Perkataan)</h3>
+                <p style="margin-bottom: 30px; font-size: 1.6rem;">Adakah perkataan di bawah المعرب atau المبني?</p>
+                
+                <div id="active-word" class="word-drop arabic arabic-xl boom-effect" style="min-width: 300px;">جارى التحميل...</div>
+                
+                <div class="category-zone arabic">
+                    <button class="zone-btn murab" onclick="checkWord('murab')"><i class="fas fa-cube mb-3 d-block"></i> المعرب</button>
+                    <button class="zone-btn mabni" onclick="checkWord('mabni')"><i class="fas fa-lock mb-3 d-block"></i> المبني</button>
+                </div>
+                
+                <div id="game1-feedback" class="arabic mt-4" style="font-size: 3rem; height: 60px; font-weight:bold; text-shadow: 0 0 20px currentColor;"></div>
+                <div id="game1-score" style="font-size: 2rem; color: var(--accent-gold); margin-top: 10px; font-weight: bold; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 30px; border-radius: 30px; border: 2px solid var(--accent-gold);">Markah: 0</div>
+            </div>
+
+            <!-- Game 2: Highlight -->
+            <div class="glass-card game-board text-center" style="margin-top: 80px;">
+                <div style="position:absolute; top: -20px; right: -20px; font-size: 8rem; color: rgba(255,215,0,0.1);"><i class="fas fa-crosshairs"></i></div>
+                <h3 class="arabic arabic-lg mb-3" style="color: var(--accent-cyan); text-shadow: 0 0 10px var(--accent-cyan);">ابحث عن الكلمة (Cari Perkataan)</h3>
+                <p id="game2-instruction" style="font-size: 1.8rem; margin-bottom: 40px; color: var(--text-main);">Cari perkataan yang <strong style="color:var(--accent-gold); font-size:2rem; text-shadow: 0 0 10px var(--accent-gold);">MABNI</strong> dalam ayat ini:</p>
+                
+                <div id="sentence-container" class="sentence-game arabic" style="direction: rtl;">
+                    <!-- Injected by JS -->
+                </div>
+                
+                <div id="game2-feedback" class="arabic mt-4" style="font-size: 3rem; height: 60px; font-weight:bold; text-shadow: 0 0 20px currentColor;"></div>
+                <button class="btn-primary mt-4 arabic" onclick="nextSentence()" id="btn-next-sentence" style="display:none; font-size: 2rem; padding: 15px 50px;"><i class="fas fa-arrow-left"></i> السؤال التالي (Seterusnya)</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. QUIZ (INTERACTIVE GAME) -->
+    <section id="quiz" class="reveal">
+        <div class="container">
+            <h2 class="section-title arabic">اختبار سريع (Kuiz Mini)</h2>
+            <p class="text-center mb-3">Uji kefahaman anda berdasarkan topik الإعراب والبناء</p>
+            
+            <div class="glass-card quiz-container arabic" id="quiz-area">
+                <div id="quiz-progress" style="font-size: 0.9rem; color: var(--accent-cyan); margin-bottom: 10px; text-align: left;" dir="ltr">Soalan 1 / 8</div>
+                
+                <div class="question-box">
+                    <h3 id="question-text" style="margin-bottom: 20px;">جارى تحميل السؤال...</h3>
+                    <div class="options" id="options-container">
+                        <!-- Buttons injected here -->
+                    </div>
+                </div>
+                
+                <div id="quiz-feedback"></div>
+                <button id="next-q-btn" class="btn-primary" onclick="nextQuestion()">التالي (Seterusnya)</button>
+            </div>
+
+            <div class="glass-card quiz-container arabic" id="quiz-results" style="display: none;">
+                <h3 class="arabic-lg">نتيجتك (Skor Anda)</h3>
+                <div class="score-display" id="final-score">0 / 8</div>
+                <p id="score-msg" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+                <button id="restart-quiz-btn" class="btn-secondary" onclick="restartQuiz()" style="display: inline-block;">إعادة الاختبار (Mula Semula)</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--bg-secondary); padding: 50px 0; text-align: center; border-top: 2px solid var(--accent-cyan); box-shadow: 0 -10px 30px rgba(10,25,47,0.8);">
+        <div class="container arabic">
+            <h3 style="color: var(--accent-gold); margin-bottom: 15px; font-size: 2.5rem; text-shadow: 0 0 10px var(--accent-gold);">الإعراب والبناء</h3>
+            <p style="font-size: 1.5rem;">Interactive Arabic Grammar Learning Presentation</p>
+            <p style="font-size: 1.5rem; color: var(--accent-cyan); margin-top: 20px; font-weight: bold;"><i class="fas fa-code"></i> Web Developer & Designer: Dr. Mohd Taufiq bin Abd Talib (UniSZA)</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         JAVASCRIPT LOGIC
+         ========================================================================== -->
+    <script>
+        // State Management
+        const state = {
+            darkMode: false,
+            quizScore: 0,
+            currentQuestion: 0
+        };
+
+        // DOM Elements setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initScrollObserver();
+            initParticles();
+            initQuiz();
+            
+            // Open tax-harakat by default
+            document.getElementById('tax-harakat').style.display = 'block';
+        });
+
+        // 1. Theme Toggle (Dark / Light)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('arabicGrammarTheme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('theme-icon').className = 'fas fa-sun';
+                state.darkMode = false;
+            } else {
+                state.darkMode = true;
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('theme-icon');
+            if (document.body.classList.contains('light-mode')) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('arabicGrammarTheme', 'light');
+            } else {
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('arabicGrammarTheme', 'dark');
+            }
+        }
+
+        // 2. Mobile Menu
+        function toggleMenu() {
+            document.getElementById('nav-links').classList.toggle('active');
+        }
+
+        // Close mobile menu on click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('nav-links').classList.remove('active');
+            });
+        });
+
+        // 3. Scroll & Progress Logic
+        function initScrollObserver() {
+            const sections = document.querySelectorAll('.reveal');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const progressBar = document.getElementById('progress-bar');
+
+            // Scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(sec => observer.observe(sec));
+
+            // Progress bar and active nav link
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const scrollY = window.scrollY;
+                const docHeight = document.body.scrollHeight - window.innerHeight;
+                
+                // Update Progress bar
+                const scrollPercent = (scrollY / docHeight) * 100;
+                progressBar.style.width = scrollPercent + '%';
+
+                // Active Nav Link
+                document.querySelectorAll('section').forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // 4. Hero Particles Effect (Bombastic background)
+        function initParticles() {
+            if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            
+            const container = document.getElementById('bubbles-container');
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                // Random properties
+                const size = Math.random() * 60 + 20 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(bubble);
+            }
+        }
+
+        // 5. Interactive Compare Tool
+        function showComparison(type) {
+            const res = document.getElementById('comparison-result');
+            res.style.display = 'block';
+            if (type === 'murab') {
+                res.innerHTML = `
+                    <h4 style="color:var(--accent-cyan)">المعرب</h4>
+                    <p>ما يَتغير آخره بتغيُّر العوامل التي تَسبِقه</p>
+                    <div style="font-size:0.9rem; margin-top:10px; color:var(--text-muted)">يتغير آخره ➔ بتغير العوامل</div>
+                `;
+                res.style.borderColor = 'var(--accent-cyan)';
+            } else {
+                res.innerHTML = `
+                    <h4 style="color:var(--accent-gold)">المبني</h4>
+                    <p>ما يُلزم آخره حالةً واحدةً، فلا يتغير، وإن تغيرت العوامل التي تتقدَّمه</p>
+                    <div style="font-size:0.9rem; margin-top:10px; color:var(--text-muted)">يلزم آخره حالة واحدة ➔ لا يتغير بتغير العوامل</div>
+                `;
+                res.style.borderColor = 'var(--accent-gold)';
+            }
+        }
+
+        // 6. Arkan Diagram Logic
+        function showArkan(type) {
+            const nodes = document.querySelectorAll('.arkan-node');
+            nodes.forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const details = document.getElementById('arkan-details');
+            let content = '';
+            switch(type) {
+                case 'amil': content = '<strong>العامل:</strong> ما يوجب كون آخر الكلمة على وجه مخصوص (السبب في الإعراب).'; break;
+                case 'mawqi': content = '<strong>الموقع:</strong> محل الكلمة في الجملة (فاعل، مفعول به، مبتدأ...).'; break;
+                case 'mamul': content = '<strong>المعمول:</strong> الكلمة التي يتغير آخرها بسبب العامل.'; break;
+                case 'alamat': content = '<strong>العلامة:</strong> الحركة أو الحرف الذي يدل على الموقع الإعرابي.'; break;
+            }
+            details.innerHTML = `<p style="font-size:1.2rem;">${content}</p>`;
+            details.classList.add('active');
+        }
+
+        // 7. Tabs Logic for Halat
+        function openTab(tabId) {
+            // Remove active classes
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active to clicked
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 8. Taxonomy Expand Logic
+        function toggleTax(id) {
+            const el = document.getElementById(id);
+            const icon = event.currentTarget.querySelector('i');
+            if (el.style.display === 'block') {
+                el.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                el.style.display = 'block';
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+
+        // 9. Search Modal Logic
+        function openSearch() {
+            document.getElementById('searchModal').style.display = 'block';
+            document.getElementById('searchInput').focus();
+        }
+        function closeSearch() {
+            document.getElementById('searchModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('searchModal')) closeSearch();
+        }
+
+        const searchData = [
+            { term: "الإعراب", link: "#concept" },
+            { term: "البناء", link: "#concept" },
+            { term: "المعرب", link: "#concept" },
+            { term: "المبني", link: "#concept" },
+            { term: "أركان الإعراب", link: "#arkan" },
+            { term: "الرفع", link: "#halat" },
+            { term: "النصب", link: "#halat" },
+            { term: "الجر", link: "#halat" },
+            { term: "الجزم", link: "#halat" },
+            { term: "الأسماء المبنية", link: "#mabni" },
+            { term: "الأفعال المبنية", link: "#mabni" },
+            { term: "أنواع البناء", link: "#mabni" }
+        ];
+
+        function performSearch() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const ul = document.getElementById('search-results');
+            ul.innerHTML = '';
+            
+            if(input.length < 2) return;
+
+            const results = searchData.filter(item => item.term.includes(input));
+            
+            if(results.length === 0) {
+                ul.innerHTML = '<li>لا توجد نتائج</li>';
+                return;
+            }
+
+            results.forEach(res => {
+                const li = document.createElement('li');
+                li.innerHTML = res.term;
+                li.onclick = () => {
+                    closeSearch();
+                    window.location.href = res.link;
+                    // If halat, click specific tab conceptually (simplified here to just section jump)
+                };
+                ul.appendChild(li);
+            });
+        }
+
+        // 10. Mini Quiz Game Logic
+        const quizData = [
+            {
+                q: "ما المقصود بالإعراب؟",
+                opts: ["تغيّر آخر الكلمة بتغير العوامل", "لزوم آخر الكلمة حالة واحدة", "حذف آخر الكلمة", "بقاء الكلمة بدون تغيير"],
+                ans: 0
+            },
+            {
+                q: "أي مما يلي يُعد من 'البناء'؟",
+                opts: ["ينجحُ الطالبُ", "ما يتغير آخره", "لزوم آخر الكلمة حالة واحدة لا تتغير", "الاسم الذي يقبل التنوين"],
+                ans: 2
+            },
+            {
+                q: "ما هي أركان الإعراب الأربعة؟",
+                opts: ["فعل، فاعل، مفعول، حرف", "عامل، موقع، معمول، علامة", "مبتدأ، خبر، صفة، مضاف", "رفع، نصب، جر، جزم"],
+                ans: 1
+            },
+            {
+                q: "الاسم المتمكن والفعل المضارع (غير المتصل بنون) هما من قسم:",
+                opts: ["المبنيات", "الأفعال الماضية", "المعربات", "الحروف"],
+                ans: 2
+            },
+            {
+                q: "أي من التالية يعتبر من 'علامات النصب'؟",
+                opts: ["الضمة", "الواو", "الفتحة", "السكون"],
+                ans: 2
+            },
+            {
+                q: "في جملة 'قُمْ لِلمعلمِ'، ما هي علامة الجر في كلمة (للمعلمِ)؟",
+                opts: ["الياء", "الكسرة", "الفتحة", "حذف النون"],
+                ans: 1
+            },
+            {
+                q: "أي من هذه الفئات تُعتبر من 'الأسماء المبنية'؟",
+                opts: ["الاسم المفرد", "جمع التكسير", "الضمائر وأسماء الإشارة", "جمع المذكر السالم"],
+                ans: 2
+            },
+            {
+                q: "كلمة 'حيثُ' مبنية على:",
+                opts: ["الفتح", "الكسر", "السكون", "الضم"],
+                ans: 3
+            }
+        ];
+
+        function initQuiz() {
+            state.currentQuestion = 0;
+            state.quizScore = 0;
+            document.getElementById('quiz-area').style.display = 'block';
+            document.getElementById('quiz-results').style.display = 'none';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = quizData[state.currentQuestion];
+            document.getElementById('question-text').innerText = (state.currentQuestion + 1) + ". " + qData.q;
+            document.getElementById('quiz-progress').innerText = `السؤال ${state.currentQuestion + 1} / ${quizData.length}`;
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            qData.opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn arabic';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').innerText = '';
+            document.getElementById('next-q-btn').style.display = 'none';
+        }
+
+        function selectOption(selectedIndex, btnElement) {
+            // Disable all buttons
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => b.disabled = true);
+
+            const qData = quizData[state.currentQuestion];
+            const feedbackEl = document.getElementById('quiz-feedback');
+
+            if (selectedIndex === qData.ans) {
+                btnElement.classList.add('correct');
+                feedbackEl.innerText = "إجابة صحيحة! (Betul!)";
+                feedbackEl.style.color = "var(--correct)";
+                state.quizScore++;
+            } else {
+                btnElement.classList.add('wrong');
+                btns[qData.ans].classList.add('correct'); // Show correct ans
+                feedbackEl.innerText = "إجابة خاطئة (Salah)";
+                feedbackEl.style.color = "var(--wrong)";
+            }
+
+            document.getElementById('next-q-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            state.currentQuestion++;
+            if (state.currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').style.display = 'none';
+            const resArea = document.getElementById('quiz-results');
+            resArea.style.display = 'block';
+            
+            document.getElementById('final-score').innerText = `${state.quizScore} / ${quizData.length}`;
+            
+            let msg = "";
+            const percentage = state.quizScore / quizData.length;
+            if (percentage === 1) msg = "ممتاز! (Sempurna!)";
+            else if (percentage >= 0.7) msg = "جيد جداً! (Sangat Bagus!)";
+            else msg = "راجع بعض المفاهيم وحاول مرة أخرى (Sila ulang kaji)";
+            
+            document.getElementById('score-msg').innerText = msg;
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        /* ==========================================================================
+           PRESENTATION CONTROLS & NEW GAMES LOGIC
+           ========================================================================== */
+        
+        // 11. Presentation Keyboard Controls (Up/Down/Space to switch sections)
+        document.addEventListener('keydown', (e) => {
+            if(document.activeElement.id === 'searchInput') return; // Ignore if typing
+            
+            const sections = Array.from(document.querySelectorAll('section'));
+            let currentSection = sections.find(sec => {
+                const rect = sec.getBoundingClientRect();
+                return rect.top >= -150 && rect.top < window.innerHeight / 2;
+            });
+            
+            let currentIndex = sections.indexOf(currentSection);
+            
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                e.preventDefault();
+                if (currentIndex < sections.length - 1) {
+                    sections[currentIndex + 1].scrollIntoView({behavior: 'smooth'});
+                }
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                if (currentIndex > 0) {
+                    sections[currentIndex - 1].scrollIntoView({behavior: 'smooth'});
+                }
+            }
+        });
+
+        // 12. Game 1: Sorting (Sihir Tatabahasa)
+        const wordsList = [
+            { w: 'يَنْجَحُ', t: 'murab' },
+            { w: 'هَذَا', t: 'mabni' },
+            { w: 'الَّذِي', t: 'mabni' },
+            { w: 'قَلَمٌ', t: 'murab' },
+            { w: 'هُمْ', t: 'mabni' },
+            { w: 'يَكْتُبُوْنَ', t: 'murab' },
+            { w: 'كَيْفَ', t: 'mabni' },
+            { w: 'طَالِبٌ', t: 'murab' }
+        ];
+        let currentWordIndex = 0;
+        let game1Score = 0;
+
+        function loadNextWord() {
+            const wordEl = document.getElementById('active-word');
+            if(!wordEl) return;
+            
+            if (currentWordIndex >= wordsList.length) {
+                wordEl.innerHTML = "<i class='fas fa-trophy'></i> اكتملت اللعبة! (Selesai)";
+                wordEl.style.color = "var(--accent-gold)";
+                wordEl.style.textShadow = "0 0 30px var(--accent-gold)";
+                document.querySelector('.category-zone').style.display = 'none';
+                return;
+            }
+            
+            wordEl.innerText = wordsList[currentWordIndex].w;
+            
+            // Re-trigger animation
+            wordEl.classList.remove('boom-effect');
+            void wordEl.offsetWidth; // trigger reflow
+            wordEl.classList.add('boom-effect');
+            
+            document.getElementById('game1-feedback').innerText = '';
+        }
+
+        function checkWord(selectedType) {
+            const correctType = wordsList[currentWordIndex].t;
+            const feedback = document.getElementById('game1-feedback');
+            
+            if (selectedType === correctType) {
+                feedback.innerText = "رائع! إجابة صحيحة (Tepat!)";
+                feedback.style.color = "var(--correct)";
+                game1Score += 10;
+                document.getElementById('game1-score').innerHTML = `<i class="fas fa-star"></i> Markah: ${game1Score}`;
+                
+                const btn = document.querySelector(`.zone-btn.${selectedType}`);
+                btn.classList.add('boom-effect');
+                setTimeout(() => btn.classList.remove('boom-effect'), 500);
+                
+                currentWordIndex++;
+                setTimeout(loadNextWord, 1200);
+            } else {
+                feedback.innerText = "حاول مرة أخرى (Salah, cuba lagi!)";
+                feedback.style.color = "var(--wrong)";
+                
+                const wordEl = document.getElementById('active-word');
+                wordEl.style.animation = "shake 0.4s";
+                setTimeout(() => wordEl.style.animation = "none", 400);
+            }
+        }
+
+        // 13. Game 2: Find the Word (Tembak Tanda)
+        const sentences = [
+            {
+                text: "يَدْرُسُ الطَّالِبُ فِي هَذَا الفَصْلِ",
+                target: "هَذَا",
+                instruction: "Cari perkataan yang <strong style='color:var(--accent-gold); font-size:2.2rem; text-shadow: 0 0 15px var(--accent-gold);'>MABNI</strong> (isim isyarah) dalam ayat ini:"
+            },
+            {
+                text: "الَّذِينَ آمَنُوا يُصَلُّونَ دَائِمًا",
+                target: "الَّذِينَ",
+                instruction: "Cari perkataan yang <strong style='color:var(--accent-gold); font-size:2.2rem; text-shadow: 0 0 15px var(--accent-gold);'>MABNI</strong> (isim mawsul) dalam ayat ini:"
+            },
+            {
+                text: "نَحْنُ نُحِبُّ اللُّغَةَ العَرَبِيَّةَ",
+                target: "نَحْنُ",
+                instruction: "Cari perkataan yang <strong style='color:var(--accent-gold); font-size:2.2rem; text-shadow: 0 0 15px var(--accent-gold);'>MABNI</strong> (dhamir) dalam ayat ini:"
+            }
+        ];
+        let currentSentenceIdx = 0;
+
+        function loadSentenceGame() {
+            const container = document.getElementById('sentence-container');
+            if(!container) return;
+            
+            if (currentSentenceIdx >= sentences.length) {
+                container.innerHTML = "<div style='color:var(--accent-cyan); text-shadow: 0 0 30px var(--accent-cyan); font-size: 4rem;'><i class='fas fa-medal d-block mb-3'></i> Tahniah! Anda telah menguasai pencarian.</div>";
+                document.getElementById('game2-instruction').style.display = "none";
+                document.getElementById('btn-next-sentence').style.display = "none";
+                document.getElementById('game2-feedback').innerText = "";
+                return;
+            }
+
+            const data = sentences[currentSentenceIdx];
+            document.getElementById('game2-instruction').innerHTML = data.instruction;
+            
+            const words = data.text.split(' ');
+            container.innerHTML = '';
+            
+            words.forEach(word => {
+                const span = document.createElement('span');
+                span.className = 'clickable-word';
+                span.innerText = word + ' ';
+                span.onclick = () => checkSentenceWord(span, word, data.target);
+                container.appendChild(span);
+            });
+            
+            document.getElementById('game2-feedback').innerText = '';
+            document.getElementById('btn-next-sentence').style.display = 'none';
+        }
+
+        function checkSentenceWord(element, word, target) {
+            const cleanWord = word.trim();
+            const feedback = document.getElementById('game2-feedback');
+            
+            document.querySelectorAll('.clickable-word').forEach(el => {
+                el.classList.remove('correct', 'wrong');
+            });
+            
+            if (cleanWord === target) {
+                element.classList.add('correct');
+                feedback.innerText = "مُمْتَاز! (Hebat, tekaan tepat!)";
+                feedback.style.color = "var(--correct)";
+                document.getElementById('btn-next-sentence').style.display = 'inline-block';
+            } else {
+                element.classList.add('wrong');
+                feedback.innerText = "خَطَأ! (Bukan yang ini, cari lagi)";
+                feedback.style.color = "var(--wrong)";
+            }
+        }
+
+        function nextSentence() {
+            currentSentenceIdx++;
+            loadSentenceGame();
+        }
+
+        // Init games after DOM loads
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                loadNextWord();
+                loadSentenceGame();
+            }, 500);
+        });
+
+    </script>
+</body>
+</html>
